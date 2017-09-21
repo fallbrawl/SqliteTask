@@ -64,6 +64,10 @@ public class CustomClassAdapter extends ArrayAdapter<CustomClass> {
         return convertView;
     }
 
+    public void add(List<CustomClass> persons){
+        this.items.addAll(persons);
+    }
+
     static class ViewHolder{
         TextView text1;
         TextView text2;

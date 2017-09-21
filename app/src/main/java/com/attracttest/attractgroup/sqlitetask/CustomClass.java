@@ -16,6 +16,8 @@ public class CustomClass implements Serializable {
     private String date;
     private String desc;
     private String misc;
+    public static int bootCounter;
+    private static int nameUnique;
 
     private CustomClass(String name, String surname, String date, String desc, String misc) {
         this.name = name;
@@ -32,7 +34,7 @@ public class CustomClass implements Serializable {
         Date dt;
         long ms;
 
-        for (int i = 0; i < 50; i++) {
+        for(int i = bootCounter;i < bootCounter+20;i++){
 
     // Get a new random instance, seeded from the clock
             rnd = new Random();
@@ -47,10 +49,10 @@ public class CustomClass implements Serializable {
             SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
             String date = DATE_FORMAT.format(dt);
 
-            //randomize String fields
-            String uuid = UUID.randomUUID().toString();
-            result.add(new CustomClass(uuid, uuid, date, uuid, uuid));
+            result.add(new CustomClass("name " + nameUnique, "surname " + nameUnique, date, "description " + nameUnique, "misc " + nameUnique));
+            nameUnique++;
         }
+        bootCounter += 20;
         return result;
     }
 
@@ -73,4 +75,5 @@ public class CustomClass implements Serializable {
     public String getMisc() {
         return misc;
     }
+
 }
