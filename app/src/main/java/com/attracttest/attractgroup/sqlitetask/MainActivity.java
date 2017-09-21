@@ -18,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = "myLogs";
     private final int MAXRECORDS = 73;
     private CustomClassAdapter customClassAdapter;
+    int i = 0;
+    int left = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +42,22 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem + visibleItemCount > totalItemCount - 2 && totalItemCount < MAXRECORDS) {
 
-                    current.addAll(classes.subList(totalItemCount, totalItemCount+20));
+                if (firstVisibleItem + visibleItemCount > totalItemCount - 2 && totalItemCount < MAXRECORDS) {
+                    i++;
+                    if (totalItemCount % 20 == 0) {
+
+                        current.addAll(classes.subList(totalItemCount, totalItemCount+20));
+
+                        Log.e("wow", String.valueOf(i));
+                        Log.e("wow", String.valueOf(MAXRECORDS - 20 * i));
+                        left = MAXRECORDS - 20 * i;
+
+                    }
+
+                    if (left != 0 ){
+                        current.addAll(classes.subList(MAXRECORDS - left, MAXRECORDS));
+                    }
                     customClassAdapter.notifyDataSetChanged();
                 }
             }
