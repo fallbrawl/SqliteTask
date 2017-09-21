@@ -34,7 +34,7 @@ public class CustomClass implements Serializable {
         Date dt;
         long ms;
 
-        for(int i = 0;i < 60;i++){
+        for(int i = 0;i < 73;i++){
 
     // Get a new random instance, seeded from the clock
             rnd = new Random();

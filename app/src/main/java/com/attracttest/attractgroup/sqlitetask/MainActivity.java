@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private Intent intent;
     private final String LOG_TAG = "myLogs";
-    private final int MAXRECORDS = 60;
+    private final int MAXRECORDS = 73;
     private CustomClassAdapter customClassAdapter;
 
     @Override
