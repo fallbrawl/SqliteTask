@@ -34,7 +34,7 @@ public class CustomClass implements Serializable {
         Date dt;
         long ms;
 
-        for(int i = bootCounter;i < bootCounter+20;i++){
+        for(int i = 0;i < 60;i++){
 
     // Get a new random instance, seeded from the clock
             rnd = new Random();
@@ -52,7 +52,6 @@ public class CustomClass implements Serializable {
             result.add(new CustomClass("name " + nameUnique, "surname " + nameUnique, date, "description " + nameUnique, "misc " + nameUnique));
             nameUnique++;
         }
-        bootCounter += 20;
         return result;
     }
 

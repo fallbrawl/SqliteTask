@@ -10,6 +10,7 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
@@ -22,11 +23,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ArrayList<CustomClass> classes = CustomClass.init();
-        customClassAdapter = new CustomClassAdapter(this, classes);
+        final ArrayList<CustomClass> classes = CustomClass.init();
+        final ArrayList<CustomClass> current = new ArrayList<>();
+        //current.addAll(classes.subList(0,20));
 
-        Log.e("staty", String.valueOf(CustomClass.init().size()));
-        Log.e("staty", String.valueOf(CustomClass.init().get(1).getDate()));
+        customClassAdapter = new CustomClassAdapter(this, current);
 
         ListView listView = (ListView) findViewById(R.id.lvClasses);
         listView.setAdapter(customClassAdapter);
@@ -40,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem + visibleItemCount > totalItemCount - 2 && totalItemCount < MAXRECORDS) {
-                    customClassAdapter.add(CustomClass.init());
+
+                    current.addAll(classes.subList(totalItemCount, totalItemCount+20));
                     customClassAdapter.notifyDataSetChanged();
                 }
             }
