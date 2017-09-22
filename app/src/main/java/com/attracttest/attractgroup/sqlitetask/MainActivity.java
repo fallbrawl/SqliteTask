@@ -31,73 +31,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final ArrayList<CustomClass> classesForDb = CustomClass.init();
+
         classesFromDb = new ArrayList<>();
         final ArrayList<CustomClass> current = new ArrayList<>();
 
-        // Creating an object for data
-        ContentValues cv = new ContentValues();
-
         // Object for controllin' the DB
         dbHelper = new DBHelper(this);
-
-        // подключаемся к БД
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        Log.d(LOG_TAG, "--- Insert in mytable: ---");
-        // подготовим данные для вставки в виде пар: наименование столбца - значение
-
-        for (CustomClass cc :
-                classesForDb) {
-            cv.put("name", cc.getName());
-            cv.put("surname", cc.getSurname());
-            cv.put("date", cc.getDate());
-            cv.put("desc", cc.getDesc());
-            cv.put("misc", cc.getMisc());
-
-            // вставляем запись и получаем ее ID
-            long rowID = db.insert("mytable", null, cv);
-            Log.d(LOG_TAG, "row inserted, ID = " + rowID);
-        }
-
-        Log.d(LOG_TAG, "--- Rows in mytable: ---");
-        // делаем запрос всех данных из таблицы mytable, получаем Cursor
-        Cursor c = db.query("mytable", null, null, null, null, null, null);
-
-        // ставим позицию курсора на первую строку выборки
-        // если в выборке нет строк, вернется false
-        if (c.moveToFirst()) {
-
-            // определяем номера столбцов по имени в выборке
-            int idColIndex = c.getColumnIndex("id");
-            int nameColIndex = c.getColumnIndex("name");
-            int surnameColIndex = c.getColumnIndex("surname");
-            int dateColIndex = c.getColumnIndex("date");
-            int descColIndex = c.getColumnIndex("desc");
-            int miscColIndex = c.getColumnIndex("misc");
-
-            do {
-                // получаем значения по номерам столбцов и пишем все в лог
-                Log.d(LOG_TAG,
-                        "ID = " + c.getInt(idColIndex) +
-                                ", name = " + c.getString(nameColIndex) +
-                                ", email = " + c.getString(surnameColIndex) +
-                                ", date = " + c.getString(dateColIndex) +
-                                ", desc = " + c.getString(descColIndex) +
-                                ", misc = " + c.getString(miscColIndex));
-
-                classesFromDb.add(new CustomClass(c.getString(nameColIndex), c.getString(surnameColIndex),
-                        c.getString(dateColIndex),c.getString(descColIndex),
-                        c.getString(miscColIndex)));
-
-                // переход на следующую строку
-                // а если следующей нет (текущая - последняя), то false - выходим из цикла
-            } while (c.moveToNext());
-        } else
-            Log.d(LOG_TAG, "0 rows");
-        c.close();
-        // закрываем подключение к БД
-        dbHelper.close();
 
         customClassAdapter = new CustomClassAdapter(this, current);
 
@@ -117,15 +56,18 @@ public class MainActivity extends AppCompatActivity {
                     i++;
                     if (totalItemCount % 20 == 0) {
 
-                        current.addAll(classesFromDb.subList(totalItemCount, totalItemCount + 20));
+                        //current.addAll(dbHelper.get().subList(totalItemCount, totalItemCount + 20));
+                        current.addAll(dbHelper.get(totalItemCount, totalItemCount, null));
 
                         left = MAXRECORDS - 20 * i;
 
                     }
 
                     if (left != 0) {
-                        current.addAll(classesFromDb.subList(MAXRECORDS - left, MAXRECORDS));
+                        current.addAll(dbHelper.get(MAXRECORDS - left, MAXRECORDS - left, null));
                     }
+//                    int pos=totalItemCount + 20;
+//                    current.addAll(classesFromDb.subList(totalItemCount, pos<=classesFromDb.size()?pos:classesFromDb.size()));
                     customClassAdapter.notifyDataSetChanged();
                 }
             }
@@ -156,6 +98,13 @@ public class MainActivity extends AppCompatActivity {
                 data.getStringExtra("date"), data.getStringExtra("misc"), data.getStringExtra("desc"));
 
         customClassAdapter.add(whatToAdd);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        dbHelper.close();
+        super.onDestroy();
 
     }
 }
