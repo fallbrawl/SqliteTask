@@ -19,7 +19,7 @@ public class CustomClass implements Serializable {
     public static int bootCounter;
     private static int nameUnique;
 
-    private CustomClass(String name, String surname, String date, String desc, String misc) {
+    public CustomClass(String name, String surname, String date, String desc, String misc) {
         this.name = name;
         this.surname = surname;
         this.date = date;
