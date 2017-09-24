@@ -56,15 +56,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
             // gettin id ID
             long rowID = db.insert("mytable", null, cv);
-            //Log.d(LOG_TAG, "row inserted, ID = " + rowID);
+            Log.d("staty", "row inserted, ID = " + rowID);
 
         }
 
-    public ArrayList<CustomClass> get(int from, int to, String sort) {
+    public ArrayList<CustomClass> get(int offset, int limit, String sort) {
         ArrayList<CustomClass> result = new ArrayList<>();
 
         // querin' all database; get Cursor object
-        Cursor c = db.query("mytable", null, null, null, null, null, null,"20," + from);
+        Log.e("staty", String.valueOf(offset));
+        Cursor c = db.query("mytable", null, null, null, null, null, sort, offset + "," + limit);
 
         // set Cursors position to first
         // if no values - returnin' false
@@ -77,11 +78,10 @@ public class DBHelper extends SQLiteOpenHelper {
             int dateColIndex = c.getColumnIndex("date");
             int descColIndex = c.getColumnIndex("desc");
             int miscColIndex = c.getColumnIndex("misc");
-            c.moveToPosition(from);
 
             do {
                 // gettin' values via columns
-//                Log.d(LOG_TAG,
+//                Log.d("staty",
 //                        "ID = " + c.getInt(idColIndex) +
 //                                ", name = " + c.getString(nameColIndex) +
 //                                ", email = " + c.getString(surnameColIndex) +
@@ -98,12 +98,12 @@ public class DBHelper extends SQLiteOpenHelper {
             } while (c.moveToNext());
         } else
             Log.d("wow", "0 rows");
+
         c.close();
+
         return result;
 
     }
-
-
 
     @Override
     public void close () {

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SqliteTask</string>
+
+    <string-array name="category">
+    <item name="it1">Asc</item>
+    <item name="it2">Desc</item>
+    </string-array>
 </resources>

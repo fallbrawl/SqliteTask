@@ -1,19 +1,24 @@
 package com.attracttest.attractgroup.sqlitetask;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
@@ -21,26 +26,53 @@ public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = "myLogs";
     private int MAXRECORDS = 73;
     private CustomClassAdapter customClassAdapter;
-    private int i = 0;
-    private int left = 0;
     private DBHelper dbHelper;
-    ArrayList<CustomClass> classesFromDb;
-    CustomClass whatToAdd;
+    private ArrayList<CustomClass> classesForDb;
+    private CustomClass whatToAdd;
+    private Toolbar toolbar;
+    private String[] category;
+    private String orderby;
+    ListView listView;
+    final ArrayList<CustomClass> current = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        classesFromDb = new ArrayList<>();
-        final ArrayList<CustomClass> current = new ArrayList<>();
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("SQLite");
+
+        category = getResources().getStringArray(R.array.category);
+
+        SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(),
+                R.array.category, R.layout.spinner_dropdown_item);
+        Spinner navigationSpinner = new Spinner(getSupportActionBar().getThemedContext());
+        navigationSpinner.setAdapter(spinnerAdapter);
+        toolbar.addView(navigationSpinner, 0);
+        orderby = "date ASC";
+
+        classesForDb = new ArrayList<>();
 
         // Object for controllin' the DB
         dbHelper = new DBHelper(this);
 
+        //init the DB
+        Log.e("staty", "init called");
+        classesForDb = CustomClass.init();
+
+        for (CustomClass cc :
+                classesForDb) {
+            dbHelper.add(cc);
+        }
+
         customClassAdapter = new CustomClassAdapter(this, current);
 
-        ListView listView = (ListView) findViewById(R.id.lvClasses);
+        listView = (ListView) findViewById(R.id.lvClasses);
         listView.setAdapter(customClassAdapter);
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -53,21 +85,25 @@ public class MainActivity extends AppCompatActivity {
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
                 if (firstVisibleItem + visibleItemCount > totalItemCount - 2 && totalItemCount < MAXRECORDS) {
-                    i++;
-                    if (totalItemCount % 20 == 0) {
+//                    i++;
+//                    Log.e("staty", "totalItem " + totalItemCount);
+//                    if (totalItemCount % 20 == 0) {
+//
+//                        Log.e("staty", String.valueOf(dbHelper.get(2,null).get(0).getDesc()));
+//
+//                        //current.addAll(dbHelper.get().subList(totalItemCount, totalItemCount + 20));
+//                        current.addAll(dbHelper.get(totalItemCount, null));
+//
+//                        left = MAXRECORDS - 20 * i;
+//                    }
+//
+//                    if (left != 0) {
+//                        current.addAll(dbHelper.get(MAXRECORDS - left, null));
+//                    }
 
-                        //current.addAll(dbHelper.get().subList(totalItemCount, totalItemCount + 20));
-                        current.addAll(dbHelper.get(totalItemCount, totalItemCount, null));
-
-                        left = MAXRECORDS - 20 * i;
-
-                    }
-
-                    if (left != 0) {
-                        current.addAll(dbHelper.get(MAXRECORDS - left, MAXRECORDS - left, null));
-                    }
-//                    int pos=totalItemCount + 20;
-//                    current.addAll(classesFromDb.subList(totalItemCount, pos<=classesFromDb.size()?pos:classesFromDb.size()));
+                    int pos = totalItemCount + 20;
+                    //current.addAll(classesForDb.subList(totalItemCount, pos<=classesForDb.size()?pos:classesForDb.size()));
+                    current.addAll(dbHelper.get(totalItemCount, pos <= classesForDb.size() ? pos : classesForDb.size() - totalItemCount, orderby));
                     customClassAdapter.notifyDataSetChanged();
                 }
             }
@@ -83,22 +119,70 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 607);
             }
         });
+
+
+
+        navigationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            int check = 0;
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (++check > 1) {
+                switch (category[position]){
+                    case "Asc":
+                        orderby = "date ASC";
+                        Toast.makeText(MainActivity.this,
+                                "asc",
+                                Toast.LENGTH_SHORT).show();
+                        listView.smoothScrollToPosition(0);
+
+                        refreshInit();
+                        break;
+                    case "Desc":
+                        orderby = "date DESC";
+                        Toast.makeText(MainActivity.this,
+                                "desc",
+                                Toast.LENGTH_SHORT).show();
+                        listView.smoothScrollToPosition(0);
+
+                        refreshInit();
+                        break;
+                }}
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
+
 
     @Override
     protected void onRestart() {
         super.onRestart();
 
+        refreshInit();
+        Log.e("staty", "RESTARTED!");
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null) {return;}
+        if (data == null) {
+            return;
+        }
         whatToAdd = new CustomClass(data.getStringExtra("name"), data.getStringExtra("surname"),
                 data.getStringExtra("date"), data.getStringExtra("misc"), data.getStringExtra("desc"));
 
-        customClassAdapter.add(whatToAdd);
+        dbHelper.add(whatToAdd);
 
+    }
+
+    private void refreshInit() {
+        customClassAdapter.clear();
+        current.addAll(dbHelper.get(0, 20, orderby));
+        customClassAdapter.notifyDataSetChanged();
     }
 
     @Override
