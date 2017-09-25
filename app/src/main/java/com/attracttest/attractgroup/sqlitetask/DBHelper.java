@@ -26,7 +26,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d("DBhelper", "--- onCreate database ---");
         // Table fields creation
         db.execSQL("create table mytable ("
-                + "id integer primary key autoincrement,"
+                + "id integer,"
                 + "name text,"
                 + "surname text,"
                 + "date text,"
@@ -40,14 +40,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void add(CustomClass cc) {
+    public void addOrUpdate(CustomClass cc) {
 
         // Creating an object for data
         ContentValues cv = new ContentValues();
 
         //Log.d(LOG_TAG, "--- Insert in mytable: ---");
         // preparing data: column - data
-
+            cv.put("id", cc.getId());
             cv.put("name", cc.getName());
             cv.put("surname", cc.getSurname());
             cv.put("date", cc.getDate());
@@ -55,8 +55,8 @@ public class DBHelper extends SQLiteOpenHelper {
             cv.put("misc", cc.getMisc());
 
             // gettin id ID
-            long rowID = db.insert("mytable", null, cv);
-            Log.d("staty", "row inserted, ID = " + rowID);
+//        if (db.update())
+            db.insert("mytable", null, cv);
 
         }
 
@@ -89,7 +89,7 @@ public class DBHelper extends SQLiteOpenHelper {
 //                                ", desc = " + c.getString(descColIndex) +
 //                                ", misc = " + c.getString(miscColIndex));
 
-                result.add(new CustomClass(c.getString(nameColIndex), c.getString(surnameColIndex),
+                result.add(new CustomClass(c.getInt(idColIndex), c.getString(nameColIndex), c.getString(surnameColIndex),
                         c.getString(dateColIndex),c.getString(descColIndex),
                         c.getString(miscColIndex)));
 

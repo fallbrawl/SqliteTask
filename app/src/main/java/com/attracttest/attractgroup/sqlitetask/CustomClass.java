@@ -16,10 +16,10 @@ public class CustomClass implements Serializable {
     private String date;
     private String desc;
     private String misc;
-    public static int bootCounter;
+    private int id;
     private static int nameUnique;
 
-    public CustomClass(String name, String surname, String date, String desc, String misc) {
+    public CustomClass(int id, String name, String surname, String date, String desc, String misc) {
         this.name = name;
         this.surname = surname;
         this.date = date;
@@ -49,7 +49,7 @@ public class CustomClass implements Serializable {
             SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
             String date = DATE_FORMAT.format(dt);
 
-            result.add(new CustomClass("name " + nameUnique, "surname " + nameUnique, date, "description " + nameUnique, "misc " + nameUnique));
+            result.add(new CustomClass(i, "name " + nameUnique, "surname " + nameUnique, date, "description " + nameUnique, "misc " + nameUnique));
             nameUnique++;
         }
         return result;
@@ -73,6 +73,10 @@ public class CustomClass implements Serializable {
 
     public String getMisc() {
         return misc;
+    }
+
+    public int getId() {
+        return id;
     }
 
 }
