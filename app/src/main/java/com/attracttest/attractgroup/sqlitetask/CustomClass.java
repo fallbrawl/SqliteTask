@@ -19,12 +19,13 @@ public class CustomClass implements Serializable {
     private int id;
     private static int nameUnique;
 
-    public CustomClass(int id, String name, String surname, String date, String desc, String misc) {
+    public CustomClass(int id, String name, String surname, String date, String desc, String misc, CustomClassInner customClassInner) {
         this.name = name;
         this.surname = surname;
         this.date = date;
         this.desc = desc;
         this.misc = misc;
+        this.id = id;
     }
 
     public static ArrayList<CustomClass> init() {

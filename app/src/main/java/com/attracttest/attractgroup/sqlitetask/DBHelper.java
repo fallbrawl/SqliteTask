@@ -55,8 +55,13 @@ public class DBHelper extends SQLiteOpenHelper {
             cv.put("misc", cc.getMisc());
 
             // gettin id ID
-//        if (db.update())
+        // Which row to update, based on the ID
+        String selection = "id=?";
+        String[] selectionArgs = { String.valueOf(cc.getId()) };
+        if (db.update("mytable", cv, selection, selectionArgs) == 0){
             db.insert("mytable", null, cv);
+        }
+
 
         }
 
@@ -109,6 +114,15 @@ public class DBHelper extends SQLiteOpenHelper {
     public void close () {
         db.close();
         super.close();
+    }
+
+    public int getLastId() {
+        Cursor c = db.query("mytable", null, null, null, null, null, "id", null);
+        c.moveToLast();
+        int idColIndex = c.getColumnIndex("id");
+        Log.e("staty", "last id " + c.getInt(idColIndex));
+
+        return c.getInt(idColIndex);
     }
 
 }

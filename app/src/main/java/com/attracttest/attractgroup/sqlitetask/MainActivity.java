@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         }
         whatToAdd = new CustomClass(data.getIntExtra("id", 0), data.getStringExtra("name"), data.getStringExtra("surname"),
                 data.getStringExtra("date"), data.getStringExtra("misc"), data.getStringExtra("desc"));
-
+        Log.e("staty" ," id is: " + whatToAdd.getId());
         dbHelper.addOrUpdate(whatToAdd);
 
     }

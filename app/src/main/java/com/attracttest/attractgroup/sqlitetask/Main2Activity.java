@@ -10,6 +10,8 @@ import android.widget.EditText;
 public class Main2Activity extends AppCompatActivity implements View.OnClickListener {
 
     final String LOG_TAG = "myLogs";
+    private static int lastId;
+    DBHelper dbHelper;
 
     private Button btnAdd;
     private EditText etName, etSurname, etDate, etDesc, etMisc;
@@ -18,6 +20,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        dbHelper = new DBHelper(this);
 
         btnAdd = (Button) findViewById(R.id.btnAdd);
         btnAdd.setOnClickListener(this);
@@ -27,6 +30,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         etDate = (EditText) findViewById(R.id.etDate);
         etDesc = (EditText) findViewById(R.id.etDesc);
         etMisc = (EditText) findViewById(R.id.etMisc);
+        lastId = dbHelper.getLastId();
 
     }
 
@@ -34,6 +38,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         Intent intent = new Intent();
 
+        intent.putExtra("id", ++lastId);
         intent.putExtra("name", etName.getText().toString());
         intent.putExtra("surname", etSurname.getText().toString());
         intent.putExtra("date", etDate.getText().toString());
