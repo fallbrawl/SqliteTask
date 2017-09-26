@@ -13,6 +13,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
     private static int lastId;
     DBHelper dbHelper;
 
+    private CustomClassInner ccI;
     private Button btnAdd;
     private EditText etName, etSurname, etDate, etDesc, etMisc;
 
@@ -37,13 +38,14 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         Intent intent = new Intent();
-
-        intent.putExtra("id", ++lastId);
+        ++lastId;
+        intent.putExtra("id", lastId);
         intent.putExtra("name", etName.getText().toString());
         intent.putExtra("surname", etSurname.getText().toString());
         intent.putExtra("date", etDate.getText().toString());
         intent.putExtra("misc", etMisc.getText().toString());
         intent.putExtra("desc", etDesc.getText().toString());
+        intent.putExtra("class", new CustomClassInner("name" + lastId, "name" + lastId, "name" + lastId));
 
         setResult(RESULT_OK, intent);
         finish();

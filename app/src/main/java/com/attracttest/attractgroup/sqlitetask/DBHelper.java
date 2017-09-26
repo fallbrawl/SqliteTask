@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 /**
@@ -31,8 +33,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "surname text,"
                 + "date text,"
                 + "desc text,"
+                + "class text,"
                 + "misc text" + ");");
-        return ;
+        return;
     }
 
     @Override
@@ -44,32 +47,35 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // Creating an object for data
         ContentValues cv = new ContentValues();
+        JSONArray jsArray = new JSONArray(cc.getCustomClassInners());
 
         //Log.d(LOG_TAG, "--- Insert in mytable: ---");
         // preparing data: column - data
-            cv.put("id", cc.getId());
-            cv.put("name", cc.getName());
-            cv.put("surname", cc.getSurname());
-            cv.put("date", cc.getDate());
-            cv.put("desc", cc.getDesc());
-            cv.put("misc", cc.getMisc());
+        cv.put("id", cc.getId());
+        cv.put("name", cc.getName());
+        cv.put("surname", cc.getSurname());
+        cv.put("date", cc.getDate());
+        cv.put("desc", cc.getDesc());
+        cv.put("misc", cc.getMisc());
+        cv.put("class", String.valueOf(jsArray));
 
-            // gettin id ID
+        // gettin id ID
         // Which row to update, based on the ID
         String selection = "id=?";
-        String[] selectionArgs = { String.valueOf(cc.getId()) };
-        if (db.update("mytable", cv, selection, selectionArgs) == 0){
+        String[] selectionArgs = {String.valueOf(cc.getId())};
+        if (db.update("mytable", cv, selection, selectionArgs) == 0) {
             db.insert("mytable", null, cv);
         }
 
 
-        }
+    }
 
     public ArrayList<CustomClass> get(int offset, int limit, String sort) {
         ArrayList<CustomClass> result = new ArrayList<>();
 
         // querin' all database; get Cursor object
         Log.e("staty", String.valueOf(offset));
+        ArrayList<CustomClassInner> ccI = new ArrayList<>();
         Cursor c = db.query("mytable", null, null, null, null, null, sort, offset + "," + limit);
 
         // set Cursors position to first
@@ -83,6 +89,7 @@ public class DBHelper extends SQLiteOpenHelper {
             int dateColIndex = c.getColumnIndex("date");
             int descColIndex = c.getColumnIndex("desc");
             int miscColIndex = c.getColumnIndex("misc");
+            int innerClassColIndex = c.getColumnIndex("innerClass");
 
             do {
                 // gettin' values via columns
@@ -94,11 +101,16 @@ public class DBHelper extends SQLiteOpenHelper {
 //                                ", desc = " + c.getString(descColIndex) +
 //                                ", misc = " + c.getString(miscColIndex));
 
+                if (c.getString(innerClassColIndex) != null) {
+                    for (int i = 0; i < c.getString(innerClassColIndex).length(); i++) {
+                        ccI.add(c.getString(innerClassColIndex).toString());
+                    }
+                }
                 result.add(new CustomClass(c.getInt(idColIndex), c.getString(nameColIndex), c.getString(surnameColIndex),
-                        c.getString(dateColIndex),c.getString(descColIndex),
-                        c.getString(miscColIndex)));
+                        c.getString(dateColIndex), c.getString(descColIndex),
+                        c.getString(miscColIndex), new ArrayList<CustomClassInner>()CustomClassInner(c.getString(innerFIeld1ColIndex), c.getString(innerFIeld2ColIndex), c.getString(innerFIeld3ColIndex))));
 
-                 //movin to the next row
+                //movin to the next row
                 // if no next - get out of cycle
             } while (c.moveToNext());
         } else
@@ -111,7 +123,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void close () {
+    public void close() {
         db.close();
         super.close();
     }
