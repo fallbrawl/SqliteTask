@@ -74,6 +74,14 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.lvClasses);
         listView.setAdapter(customClassAdapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+                CustomClass ccI = (CustomClass) listView.getItemAtPosition(position);
+                Toast.makeText(getApplicationContext(), ccI.getCustomClassInners().getField1(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
@@ -101,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
                     int pos = totalItemCount + 20;
                     //current.addAll(classesForDb.subList(totalItemCount, pos<=classesForDb.size()?pos:classesForDb.size()));
                     current.addAll(dbHelper.get(totalItemCount, pos <= classesForDb.size() ? pos : classesForDb.size() - totalItemCount, orderby));
+                    //Log.e("staty", current.get(1).getCustomClassInners().getField1());
+                    Log.e("staty", dbHelper.get(2,1, null).get(0).getCustomClassInners().getField1());
                     customClassAdapter.notifyDataSetChanged();
                 }
             }

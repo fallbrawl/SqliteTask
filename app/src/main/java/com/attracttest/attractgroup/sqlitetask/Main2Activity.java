@@ -45,7 +45,6 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         intent.putExtra("date", etDate.getText().toString());
         intent.putExtra("misc", etMisc.getText().toString());
         intent.putExtra("desc", etDesc.getText().toString());
-        intent.putExtra("class", new CustomClassInner("name" + lastId, "name" + lastId, "name" + lastId));
 
         setResult(RESULT_OK, intent);
         finish();

@@ -17,16 +17,16 @@ public class CustomClass implements Serializable {
     private String desc;
     private String misc;
     private int id;
-    private ArrayList<CustomClassInner> customClassInners;
+    private CustomClassInner customClassInner;
 
-    public CustomClass(int id, String name, String surname, String date, String desc, String misc, ArrayList<CustomClassInner> customClassInners) {
+    public CustomClass(int id, String name, String surname, String date, String desc, String misc, CustomClassInner customClassInner) {
         this.name = name;
         this.surname = surname;
         this.date = date;
         this.desc = desc;
         this.misc = misc;
         this.id = id;
-        this.customClassInners = customClassInners;
+        this.customClassInner = customClassInner;
     }
 
     public static ArrayList<CustomClass> init() {
@@ -51,12 +51,9 @@ public class CustomClass implements Serializable {
             SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
             String date = DATE_FORMAT.format(dt);
 
-            ArrayList<CustomClassInner> customClassInners = new ArrayList<>();
-            for (int j = 0; j < 3; j++) {
-                customClassInners.add(new CustomClassInner("field1 " + i, "filed2 " + i,"field3 " + i));
-            }
+            CustomClassInner customClassInner = new CustomClassInner(i, "field1 " + i, "filed2 " + i,"field3 " + i);
 
-            result.add(new CustomClass(i, "name " + i, "surname " + i, date, "description " + i, "misc " + i, customClassInners));
+            result.add(new CustomClass(i, "name " + i, "surname " + i, date, "description " + i, "misc " + i, customClassInner));
 
         }
         return result;
@@ -86,6 +83,6 @@ public class CustomClass implements Serializable {
         return id;
     }
 
-    public ArrayList<CustomClassInner> getCustomClassInners() { return customClassInners; }
+    public CustomClassInner getCustomClassInners() { return customClassInner; }
 
 }

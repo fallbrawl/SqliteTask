@@ -9,11 +9,13 @@ public class CustomClassInner implements Serializable {
     private String field1;
     private String field2;
     private String field3;
+    private int id;
 
-    public CustomClassInner(String field1, String field2, String field3) {
+    public CustomClassInner(int id, String field1, String field2, String field3) {
         this.field1 = field1;
         this.field2 = field2;
         this.field3 = field3;
+        this.id = id;
     }
 
     public String getField1() {
@@ -26,5 +28,9 @@ public class CustomClassInner implements Serializable {
 
     public String getField3() {
         return field3;
+    }
+
+    public int getId() {
+        return id;
     }
 }
