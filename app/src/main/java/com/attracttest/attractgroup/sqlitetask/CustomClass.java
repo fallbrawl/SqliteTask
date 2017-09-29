@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 /**
  * Created by nexus on 20.09.2017.
@@ -52,7 +53,7 @@ public class CustomClass implements Serializable {
             ArrayList<CustomClassInner> wow = new ArrayList<>();
 
             for (int j = 0; j < 3; j++) {
-                wow.add(new CustomClassInner(String.valueOf(i), "field1 " + i, "filed2 " + i,"field3 " + i));
+                wow.add(new CustomClassInner(String.valueOf(i) + String.valueOf(j), "field1 " + i, "filed2 " + i,"field3 " + i));
 
             }
 

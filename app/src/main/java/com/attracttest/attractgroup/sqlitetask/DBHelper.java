@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private final String INNERTABLENAME = "mytableInner";
 
     public DBHelper(Context context) {
-        super(context, "myDB3", null, 3);
+        super(context, "myDB3", null, 4);
     }
 
     @Override
@@ -44,6 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
         // Inner table fields creation
         db.execSQL("create table " + INNERTABLENAME + " ("
                 + "innerID text,"
+                + "mainID text,"
                 + "field1 text,"
                 + "field2 text,"
                 + "field3 text" + ");");
@@ -53,8 +54,8 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
-        if (i1 == 3) {
-
+        if (i1 == 4) {
+            sqLiteDatabase.execSQL("ALTER TABLE " + INNERTABLENAME + " ADD COLUMN mainID TEXT;");
 
         }
 
@@ -83,27 +84,31 @@ public class DBHelper extends SQLiteOpenHelper {
         if (db.update(TABLENAME, maincv, selection, selectionArgs) == 0) {
             db.insert(TABLENAME, null, maincv);
         }
-        addOrUpdateInner(customClass.getCustomClassInners());
+        for (CustomClassInner cci : customClass.getCustomClassInners()) {
+            addOrUpdateInner(cci, customClass.getId());
+        }
+
     }
 
-    public void addOrUpdateInner(ArrayList<CustomClassInner> customClassInners) {
+    public void addOrUpdateInner(CustomClassInner customClassInners, String ID) {
 
         ContentValues innercv = new ContentValues();
         //extractin inner table from Arraylist
 
-        for (int i = 0; i < 3; i++) {
-            innercv.put("innerID", customClassInners.get(i).getId());
-            innercv.put("field1", customClassInners.get(i).getField1());
-            innercv.put("field2", customClassInners.get(i).getField2());
-            innercv.put("field3", customClassInners.get(i).getField3());
 
-            // gettin id ID
-            // Which row to update, based on the ID
-            String selection = "innerID=?";
-            String[] selectionArgs = {String.valueOf(customClassInners.get(i).getId())};
-            if (db.update(INNERTABLENAME, innercv, selection, selectionArgs) == 0) {
-                db.insert("mytableInner", null, innercv);
-            }
+        innercv.put("innerID", customClassInners.getId());
+        innercv.put("mainID", ID);
+        innercv.put("field1", customClassInners.getField1());
+        innercv.put("field2", customClassInners.getField2());
+        innercv.put("field3", customClassInners.getField3());
+
+        // gettin id ID
+        // Which row to update, based on the ID
+        String selection = "innerID=?";
+        String[] selectionArgs = {String.valueOf(customClassInners.getId())};
+        if (db.update(INNERTABLENAME, innercv, selection, selectionArgs) == 0) {
+            db.insert("mytableInner", null, innercv);
+
         }
     }
 
@@ -112,9 +117,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // querin' all database; get Cursor object
 
-        Cursor c = db.query("mytable INNER JOIN mytableInner ON mytable.mainID=mytableInner.innerID",
+        Cursor c = db.query("mytable INNER JOIN mytableInner ON mytable.mainID=mytableInner.mainID",
                 null, null, null, null, null, sort, offset + "," + limit);
-        //Cursor c = db.query("mytable", null, null, null, null, null, sort, offset + "," + limit);
 
 
         // set Cursors position to first
@@ -140,29 +144,32 @@ public class DBHelper extends SQLiteOpenHelper {
 
             do {
                 // gettin' values via columns
-                Log.d("Maintable",
-                        "ID = " + c.getInt(idMainColIndex) +
-                                ", name = " + c.getString(nameMainColIndex) +
-                                ", email = " + c.getString(surnameMainColIndex) +
-                                ", date = " + c.getString(dateMainColIndex) +
-                                ", desc = " + c.getString(descMainColIndex) +
-                                ", misc = " + c.getString(miscMainColIndex) +
-                "innerfield1 = "+ c.getString(innerField1));
-               Log.e("staty", "cursor " + String.valueOf(c.getCount()));
-//                for (int i = 0; i < 2; i++) {
-//                    if (c.moveToNext()) {
-//                        customClassInnersResult.add(new CustomClassInner(c.getString(idInnerColIndex), c.getString(innerField1), c.getString(innerField2),
-//                                c.getString(innerField3)));
-//                    }
-//
-//                }
-//                customClassInnersResult.add(new CustomClassInner(c.getString(idInnerColIndex), c.getString(innerField1), c.getString(innerField2),
-//                        c.getString(innerField3)));
-//               result.add(new CustomClass(c.getString(idMainColIndex), c.getString(nameMainColIndex),
-//                        c.getString(surnameMainColIndex),
-//                        c.getString(dateMainColIndex), c.getString(descMainColIndex),
-//                        c.getString(miscMainColIndex), customClassInnersResult));
-//                customClassInnersResult.clear();
+//                Log.d("Maintable",
+//                        "ID = " + c.getInt(idMainColIndex) +
+//                                ", name = " + c.getString(nameMainColIndex) +
+//                                ", email = " + c.getString(surnameMainColIndex) +
+//                                ", date = " + c.getString(dateMainColIndex) +
+//                                ", desc = " + c.getString(descMainColIndex) +
+//                                ", misc = " + c.getString(miscMainColIndex) +
+//                                "innerfield1 = " + c.getString(innerField1));
+//                Log.e("staty", "cursor " + String.valueOf(c.getCount()));
+
+                CustomClass cc = new CustomClass(c.getString(idMainColIndex), c.getString(nameMainColIndex),
+                        c.getString(surnameMainColIndex),
+                        c.getString(dateMainColIndex), c.getString(descMainColIndex),
+                        c.getString(miscMainColIndex), new ArrayList<CustomClassInner>());
+
+                if(result.size()==0)
+                    result.add(cc);
+                int index=result.size()-1;
+
+               if (!result.get(index).getId().equals(cc.getId())) {
+                        result.add(cc);
+                }
+
+                result.get(index).getCustomClassInners().add(new CustomClassInner(c.getString(idInnerColIndex), c.getString(innerField1), c.getString(innerField2),
+                        c.getString(innerField3)));
+
 
                 //movin to the next row
                 // if no next - get out of cycle
