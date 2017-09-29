@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
-import java.util.UUID;
 
 /**
  * Created by nexus on 20.09.2017.
@@ -16,17 +15,17 @@ public class CustomClass implements Serializable {
     private String date;
     private String desc;
     private String misc;
-    private int id;
-    private CustomClassInner customClassInner;
+    private String id;
+    private ArrayList<CustomClassInner> customClassInners;
 
-    public CustomClass(int id, String name, String surname, String date, String desc, String misc, CustomClassInner customClassInner) {
+    public CustomClass(String id, String name, String surname, String date, String desc, String misc, ArrayList<CustomClassInner> customClassInners) {
         this.name = name;
         this.surname = surname;
         this.date = date;
         this.desc = desc;
         this.misc = misc;
         this.id = id;
-        this.customClassInner = customClassInner;
+        this.customClassInners = customClassInners;
     }
 
     public static ArrayList<CustomClass> init() {
@@ -36,7 +35,7 @@ public class CustomClass implements Serializable {
         Date dt;
         long ms;
 
-        for(int i = 0;i < 73;i++){
+        for(int i = 0; i < 73; i++){
 
     // Get a new random instance, seeded from the clock
             rnd = new Random();
@@ -50,10 +49,14 @@ public class CustomClass implements Serializable {
             dt = new Date(ms);
             SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
             String date = DATE_FORMAT.format(dt);
+            ArrayList<CustomClassInner> wow = new ArrayList<>();
 
-            CustomClassInner customClassInner = new CustomClassInner(i, "field1 " + i, "filed2 " + i,"field3 " + i);
+            for (int j = 0; j < 3; j++) {
+                wow.add(new CustomClassInner(String.valueOf(i), "field1 " + i, "filed2 " + i,"field3 " + i));
 
-            result.add(new CustomClass(i, "name " + i, "surname " + i, date, "description " + i, "misc " + i, customClassInner));
+            }
+
+            result.add(new CustomClass(String.valueOf(i), "name " + i, "surname " + i, date, "description " + i, "misc " + i, wow));
 
         }
         return result;
@@ -79,10 +82,10 @@ public class CustomClass implements Serializable {
         return misc;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public CustomClassInner getCustomClassInners() { return customClassInner; }
+    public ArrayList<CustomClassInner> getCustomClassInners() { return customClassInners; }
 
 }

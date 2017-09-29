@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         for (CustomClass cc :
                 classesForDb) {
-            dbHelper.addOrUpdate(cc);
+            dbHelper.addOrUpdateMain(cc);
 
         }
         //Log.e("staty", "db: " + String.valueOf(dbHelper.lol()));
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
                 CustomClass ccI = (CustomClass) listView.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(), ccI.getCustomClassInners().getField1(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), ccI.getCustomClassInners().getField1(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -110,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
                     //current.addAll(classesForDb.subList(totalItemCount, pos<=classesForDb.size()?pos:classesForDb.size()));
                     current.addAll(dbHelper.get(totalItemCount, pos <= classesForDb.size() ? pos : classesForDb.size() - totalItemCount, orderby));
                     //Log.e("staty", current.get(1).getCustomClassInners().getField1());
-                    Log.e("staty", dbHelper.get(2,1, null).get(0).getCustomClassInners().getField1());
+                    //Log.e("staty", dbHelper.get(2,1, null).get(0).getCustomClassInners().get(0).getField1()
+                    Log.e("staty", "total " + totalItemCount);
                     customClassAdapter.notifyDataSetChanged();
                 }
             }
@@ -179,10 +180,10 @@ public class MainActivity extends AppCompatActivity {
         if (data == null) {
             return;
         }
-        whatToAdd = new CustomClass(data.getIntExtra("id", 0), data.getStringExtra("name"), data.getStringExtra("surname"),
-                data.getStringExtra("date"), data.getStringExtra("misc"), data.getStringExtra("desc"), (CustomClassInner) data.getSerializableExtra("class"));
+//        whatToAdd = new CustomClass(data.getIntExtra("id", 0), data.getStringExtra("name"), data.getStringExtra("surname"),
+//                data.getStringExtra("date"), data.getStringExtra("misc"), data.getStringExtra("desc"), (CustomClassInner) data.getSerializableExtra("class"));
         Log.e("staty" ," id is: " + whatToAdd.getId());
-        dbHelper.addOrUpdate(whatToAdd);
+        dbHelper.addOrUpdateMain(whatToAdd);
 
     }
 
